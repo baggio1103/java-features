@@ -20,7 +20,7 @@ A class to be serialized
 - all the fields of a class must be Serializable. 
   For example, a class field is an instance of another class, that field 
   must be Serializable, otherwise an **NotSerializableException** 
-  exception will be thrown. [Check out this example](/src/serializable/Employee.java)
+  exception will be thrown. [Check out this example](https://github.com/baggio1103/java-features/tree/main/serialization/src/serializable)
   
 
 There are cases when we don't want some fields to be
