@@ -23,12 +23,13 @@ public class PersonInvocationHandler implements InvocationHandler {
                         annotationStream.filter(annotation ->
                                 annotation.annotationType() == TRANSACTIONAL.class)
                                 .findAny()).ifPresentOrElse(annotation -> {
-                    try {
-                        System.out.println("Running in Transactional mode");
-                        method.invoke(person, args);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
+                        runInTransaction(() -> {
+                            try {
+                                method.invoke(person, args);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        });
                 },
                 () -> {
                     try {
@@ -41,6 +42,18 @@ public class PersonInvocationHandler implements InvocationHandler {
         );
         System.out.println("--- Method: " + method.getName().toUpperCase() + " successfully executed ---");
         return proxy;
+    }
+
+
+    public  void runInTransaction(Task task) {
+        System.out.println("Starting transaction...");
+        try {
+            task.run();
+            System.out.println("Successfully executed");
+        } catch (Exception exception) {
+            System.out.println("Rolling back transaction");
+        }
+        System.out.println("Closing transaction...");
     }
 
 }
