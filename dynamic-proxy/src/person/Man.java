@@ -12,8 +12,8 @@ public class Man implements Person {
     }
 
     @Override
-    public void introduce(String name, Integer age) {
-        System.out.printf("My name is %s and I am %d years old%n", name, age);
+    public String introduce(String name, Integer age) {
+        return String.format("My name is %s and I am %d years old%n", name, age);
     }
 
     @Override

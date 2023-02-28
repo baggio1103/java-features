@@ -15,9 +15,9 @@ public class PersonInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
         System.out.println("Method with name: " + method.getName() + " is called");
-        method.invoke(person, args);
+        var result = method.invoke(person, args);
         System.out.println("--- Method " + method.getName() + " successfully executed ---");
-        return proxy;
+        return result;
     }
 
 }
