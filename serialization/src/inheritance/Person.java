@@ -6,6 +6,8 @@ public class Person {
 
     private Gender gender;
 
+    public Person() {
+    }
 
     public Person(String id, Gender gender) {
         this.id = id;
