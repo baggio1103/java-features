@@ -37,7 +37,6 @@ public class Demo {
         // Invoking a static method
         var result = invokeStaticMethod(Country.class, "getDetails", String[].class);
         System.out.println(Arrays.toString(result));
-
     }
 
 
