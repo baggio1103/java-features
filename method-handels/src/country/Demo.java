@@ -3,6 +3,7 @@ package country;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.invoke.MethodHandles.Lookup;
@@ -33,7 +34,7 @@ public class Demo {
         System.out.println(wakanda);
 
         var rohan = new Country();
-        invokeFieldSet(rohan, "Rohan");
+        invokeFieldSetter(rohan, "Rohan");
         System.out.println(rohan);
 
         var noArg = invokeNoArgConstructor(Country.class);
@@ -43,9 +44,21 @@ public class Demo {
         System.out.println(argConstructor);
 
         var rivendel = new Country();
-        invokeFieldSet(rivendel, "Rivendel");
+        invokeFieldSetter(rivendel, "Rivendel");
         invokePrivateField(rivendel, 123456789);
         System.out.println(rivendel);
+
+        // getter Method handle using findGetter method - it finds the necessary getterMethod by its fieldName
+        System.out.println("Result of invokeGetterCountry:  " + invokeGetterCountry(rivendel, "name"));
+
+        // getter Method handle using findVirtual method - it finds the necessary method by its name
+        System.out.println(invokeGetterCountry(Country.class, rivendel, String.class, "getName"));
+
+
+        // Invoking a static method
+        var result = invokeStaticMethod(Country.class, "getDetails", String[].class);
+        System.out.println(Arrays.toString(result));
+
     }
 
     // Method handle for setter
@@ -59,8 +72,37 @@ public class Demo {
         }
     }
 
-    // Method handle for filed
-    private static void invokeFieldSet(Country country, String name) {
+
+    // Method handler method getter using method - findVirtual() that uses a methodType
+    // to find any method defined in side a given class - tClass
+    @SuppressWarnings("unchecked")
+    private static <R, T> R invokeGetterCountry(Class<T> tClass, T object, Class<R> rClass, String methodName) {
+        try {
+            var methodType = MethodType.methodType(rClass);
+            var virtualMethodHandle = lookup.findVirtual(tClass, methodName, methodType);
+            var result = virtualMethodHandle.invoke(object);
+            return (R) result;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Method handle for getter using findGetter() - it find a fields by a given name
+    private static String invokeGetterCountry(Country country, String fieldName) {
+        try {
+            var methodHandle = lookup.findGetter(Country.class, fieldName, String.class);
+            return (String) methodHandle.invoke(country);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Method handle for field setter. findSetter() creates a methodHandler that
+    // gives a write access to a non static field. Since it is a field, not a method,
+    // it does not require a MethodType
+    private static void invokeFieldSetter(Country country, String name) {
         String fieldName = "name";
         try {
             MethodHandle nameFieldHandler = lookup.findSetter(Country.class, fieldName, String.class);
@@ -96,11 +138,23 @@ public class Demo {
 
     @SuppressWarnings("unchecked")
     // Method handle for no arg Constructor
-    private static <T>T invokeArgConstructor(Class<T> tClass, List<?> arguments, Class<?>... pTypes) {
+    private static <T> T invokeArgConstructor(Class<T> tClass, List<?> arguments, Class<?>... pTypes) {
         var argConstructor = MethodType.methodType(void.class, pTypes);
         try {
             var methodHandle = lookup.findConstructor(tClass, argConstructor);
             return (T) methodHandle.invokeWithArguments(arguments);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T, R> R invokeStaticMethod(Class<T> tClass, String methodName, Class<R> rClass) {
+        try {
+            var staticMethodType = MethodType.methodType(rClass);
+            var staticMethodHandle = lookup.findStatic(tClass, methodName, staticMethodType);
+           return (R) staticMethodHandle.invoke();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
