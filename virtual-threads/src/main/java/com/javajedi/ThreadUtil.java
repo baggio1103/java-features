@@ -21,4 +21,14 @@ public class ThreadUtil {
         log.info(String.format("%s | %s", Thread.currentThread(), message));
     }
 
+    public static Thread virtualThread(String name, Runnable runnable) {
+        return Thread.ofVirtual()
+                .name(name)
+                .start(runnable);
+    }
+
+    public static boolean alwaysTrue() {
+        return true;
+    }
+
 }
