@@ -1,4 +1,4 @@
-package com.javajedi.introduction;
+package com.javajedi.virtualthreads;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutionException;

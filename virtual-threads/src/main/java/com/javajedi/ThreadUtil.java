@@ -1,6 +1,6 @@
 package com.javajedi;
 
-import com.javajedi.introduction.VirtualThread;
+import com.javajedi.virtualthreads.VirtualThread;
 import org.apache.log4j.Logger;
 
 import java.time.Duration;
